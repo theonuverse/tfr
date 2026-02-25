@@ -1,24 +1,36 @@
 #!/bin/bash
 
-# Define the target location
+# Termux target location
 TARGET_DIR="$PREFIX/bin"
 TARGET_FILE="$TARGET_DIR/tfr"
-URL="https://github.com/theonuverse/tfr/releases/download/v0.0.1-prealpha/tfr"
+
+# Detect architecture
+ARCH=$(uname -m)
+
+# Set URL based on architecture
+case "$ARCH" in
+    x86_64)
+        URL="https://github.com/theonuverse/tfr/releases/download/v0.0.1-prealpha/tfr_x86_64"
+        ;;
+    aarch64|arm64)
+        URL="https://github.com/theonuverse/tfr/releases/download/v0.0.1-prealpha/tfr_aarch64"
+        ;;
+    *)
+        echo "Error: Architecture $ARCH not supported."
+        exit 1
+        ;;
+esac
 
 # 1. Ensure the bin directory exists
 mkdir -p "$TARGET_DIR"
 
-# 2. Download the file
-# -L follows redirects (required for GitHub)
-# -o specifies the output path
-echo "Downloading tfr..."
-curl -sL -o "$TARGET_FILE" "$URL"
-
-# 3. Make it executable
-if [ -f "$TARGET_FILE" ]; then
+# 2. Download directly as 'tfr'
+echo "Downloading $ARCH version to $TARGET_FILE..."
+if curl -sL -f -o "$TARGET_FILE" "$URL"; then
+    # 3. Make it executable
     chmod +x "$TARGET_FILE"
     echo "Success! tfr is now installed in $TARGET_DIR"
 else
-    echo "Error: Download failed."
+    echo "Error: Download failed. Please check the URL for $ARCH."
     exit 1
 fi
