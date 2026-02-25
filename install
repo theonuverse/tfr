@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Define the target location
+TARGET_DIR="$PREFIX/bin"
+TARGET_FILE="$TARGET_DIR/tfr"
+URL="https://github.com/theonuverse/tfr/releases/download/v0.0.1-prealpha/tfr"
+
+# 1. Ensure the bin directory exists
+mkdir -p "$TARGET_DIR"
+
+# 2. Download the file
+# -L follows redirects (required for GitHub)
+# -o specifies the output path
+echo "Downloading tfr..."
+curl -sL -o "$TARGET_FILE" "$URL"
+
+# 3. Make it executable
+if [ -f "$TARGET_FILE" ]; then
+    chmod +x "$TARGET_FILE"
+    echo "Success! tfr is now installed in $TARGET_DIR"
+else
+    echo "Error: Download failed."
+    exit 1
+fi
